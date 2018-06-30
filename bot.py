@@ -19,9 +19,8 @@ def getMe():
 	info = vk.users.get(fields="nickname")
 	return info
 
-def auth(token=""):
+def auth(token):
 	""" authentication """
-	token = "670b31862e15c59168dcae17c978ff19f622d3183f1d21b650a9852e95a3c0eaf7007f360a448b210c7f4"
 	try:
 		v = VkApi(token=token)
 		lp = VkLongPoll(v)
