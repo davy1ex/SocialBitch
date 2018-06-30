@@ -1,5 +1,3 @@
-# import random
-
 from vk_api import *
 from vk_api.exceptions import ApiError
 from vk_api.longpoll import *
