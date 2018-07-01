@@ -6,7 +6,7 @@ from vk_api.exceptions import ApiError
 from vk_api.longpoll import *
 
 actions = 0
-ACTION_LIMIT = 190
+REQUESTS_PER_DAY = 10
 
 
 def menu():
@@ -47,13 +47,19 @@ def get_id_followers(user_id=None):
         print("Subscribers not found :(")
         return None
 
-def take_in_frends(user_id, follow=0):
+def take_in_frends(user_id, follow=0, text=None):
     """ adds to friends """
     user_id = int(user_id)
     if follow == 0 or follow == 1:
-        vk.friends.add(user_id=user_id, follow=follow)
-        global actions
-        actions += 1
+        try:
+            vk.friends.add(user_id=user_id, follow=follow, text=text)
+            global actions
+            actions += 1
+        except ApiError:
+             pass
+        except Captcha:
+            print("Oops, it seems to have finished. Suddenly there was a capcha, wait a little...\nTry:\n\t1. Wait a bit;\n\t2. Follow the link: https://vk.com/dev/friends.add and try it manually.")
+        
     else:
         return "ERROR: follow must be 1 or 0"
     if follow == 0:
@@ -70,35 +76,33 @@ if __name__ == "__main__":
     while choice != "0":
         choice = input()
         if choice == "1":
-            ids = get_id_followers()
-            if ids != None and actions < ACTION_LIMIT:
+            ids = get_id_followers()            
+            if ids != None and actions < REQUESTS_PER_DAY:
                 for user_id in ids:
                     take_in_frends(user_id=user_id)
-            elif actions >= ACTION_LIMIT:
+            elif actions >= REQUESTS_PER_DAY:
                 print("Exhausted action limit from this account, come back tomorrow")
         elif choice == "2":
-            MY_FRIENDS = vk.friends.get()["items"]
+            print("actions", actions)
+            print("actions limit", REQUESTS_PER_DAY)
+            MY_FRIENDS_0 = vk.friends.get()["items"]
             my_friends = vk.friends.get()["items"]
             my_friends_count = vk.friends.get()["count"]
+            suckers = vk.friends.getRequests(out=1)["items"]
             print("Found:", my_friends)
-            for i in range(random.randint(1, my_friends_count)):
+            for i in range(random.randint(1, my_friends_count + 1)):
                 friend = random.choice(my_friends)
-                friends_friend = vk.friends.get(user_id=friend)["items"]
+                try:
+                    friends_friend = vk.friends.get(user_id=friend)["items"]
+                except ApiError:
+                    continue
                 for friend_f in friends_friend:
-                    if friend_f not in MY_FRIENDS:
-                        # try:
-                        #     take_in_frends(user_id=friend_f)
-                        #     print("Add:", friend_f)
-                        #     my_friends.remove(friend)
-                        # # except ApiError:
-                        # #     continue
-                        # except Captcha:
-                        #     print("Oops, it seems to have finished. Suddenly there was a capcha, wait a little...")
-                        #     break
-                        print(friend_f)
+                    if friend_f not in MY_FRIENDS_0 and actions < REQUESTS_PER_DAY and friend_f not in suckers:
                         take_in_frends(user_id=friend_f)
-                        print("Add:", friend_f)
-                        my_friends.remove(friend)
                         sleep(3)
+                    elif actions >= REQUESTS_PER_DAY:
+                        print("Exhausted action limit from this account, come back tomorrow")
+                        exit()
+                my_friends.remove(friend)
         print("")
     print("Good bye.")
