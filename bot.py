@@ -30,7 +30,7 @@ def auth(token):
         name = first_name + " " + last_name
         print("{0}: Authorization completed successfully".format(name))
     except ApiError:
-        print("ERROR: Invalid token")
+        print("ERROR: Invalid token", "\n")
         auth(token=input("Try again: "))
 
 def get_id_followers(user_id=None):
