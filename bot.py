@@ -9,7 +9,7 @@ ACTION_LIMIT = 190
 def menu():
 	""" show text menu """
 	print()
-	for index, paragraph in enumerate(["Exit", "Get subs", "Add all subs", "Be bitch"], 0):
+	for index, paragraph in enumerate(["Exit", "Add all subs", "Be bitch"], 0):
 		print("[{0}] {1}".format(index, paragraph), "\n")
 
 def getMe():
@@ -41,7 +41,7 @@ def get_id_followers(user_id=None):
 			print("{0}. {1}".format(index, user_id))
 		return subs
 	else:
-		print("Not found")
+		print("Subscribers not found :(")
 		return None
 
 def take_in_frends(user_id, follow=0):
@@ -60,19 +60,26 @@ def take_in_frends(user_id, follow=0):
 		print("Rejected this user's request: {}".format(user_id), "\n")
 
 if __name__ == "__main__":
-	print("-"*13, " SocialBitch_bot by davy1ex ", "-"*13)
+	print("-"*13, " SocialBitch_bot by davy1ex ", "-"*13, "\n")
 	auth(token=input("Token: "))
 	menu()
 	choice = ""
 	while choice != "0":
 		choice = input()
 		if choice == "1":
-			get_id_followers()
-		elif choice == "2":
+			# if actions < ACTION_LIMIT:
 			ids = get_id_followers()
-			if ids != None:
+			if ids != None and actions < ACTION_LIMIT:
 				for user_id in ids:
 					take_in_frends(user_id=user_id)
-		elif choice == "3":
+			elif actions >= ACTION_LIMIT:
+				print("Exhausted action limit from this account, come back tomorrow")
+		# elif choice == "2":
+		# 	ids = get_id_followers()
+		# 	if ids != None:
+		# 		for user_id in ids:
+		# 			take_in_frends(user_id=user_id)
+		elif choice == "2":
 			print("Coming soon")
 		print("")
+	print("Good bye.")
