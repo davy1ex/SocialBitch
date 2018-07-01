@@ -1,3 +1,6 @@
+import random
+from time import sleep
+
 from vk_api import *
 from vk_api.exceptions import ApiError
 from vk_api.longpoll import *
@@ -74,6 +77,28 @@ if __name__ == "__main__":
             elif actions >= ACTION_LIMIT:
                 print("Exhausted action limit from this account, come back tomorrow")
         elif choice == "2":
-            print("Coming soon")
+            MY_FRIENDS = vk.friends.get()["items"]
+            my_friends = vk.friends.get()["items"]
+            my_friends_count = vk.friends.get()["count"]
+            print("Found:", my_friends)
+            for i in range(random.randint(1, my_friends_count)):
+                friend = random.choice(my_friends)
+                friends_friend = vk.friends.get(user_id=friend)["items"]
+                for friend_f in friends_friend:
+                    if friend_f not in MY_FRIENDS:
+                        # try:
+                        #     take_in_frends(user_id=friend_f)
+                        #     print("Add:", friend_f)
+                        #     my_friends.remove(friend)
+                        # # except ApiError:
+                        # #     continue
+                        # except Captcha:
+                        #     print("Oops, it seems to have finished. Suddenly there was a capcha, wait a little...")
+                        #     break
+                        print(friend_f)
+                        take_in_frends(user_id=friend_f)
+                        print("Add:", friend_f)
+                        my_friends.remove(friend)
+                        sleep(3)
         print("")
     print("Good bye.")
