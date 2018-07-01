@@ -67,18 +67,12 @@ if __name__ == "__main__":
     while choice != "0":
         choice = input()
         if choice == "1":
-            # if actions < ACTION_LIMIT:
             ids = get_id_followers()
             if ids != None and actions < ACTION_LIMIT:
                 for user_id in ids:
                     take_in_frends(user_id=user_id)
             elif actions >= ACTION_LIMIT:
                 print("Exhausted action limit from this account, come back tomorrow")
-        # elif choice == "2":
-        #   ids = get_id_followers()
-        #   if ids != None:
-        #       for user_id in ids:
-        #           take_in_frends(user_id=user_id)
         elif choice == "2":
             print("Coming soon")
         print("")
